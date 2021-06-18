@@ -33,13 +33,28 @@ class Board:
         return start_hole
 
     def scatter(self, start_name):
+        if start_name[-1] == "0":
+            return False, "Can't take rocks from player's gather hole"
+        start_hole = self.ll_hole.get_by_name(start_name)
+        rocks_to_scatter = start_hole.take_rocks()
+        if not rocks_to_scatter:
+            return False, f"No rocks in hole {start_name}"
+        working_on_hole = start_hole.linked_hole
+        while rocks_to_scatter:
+            working_on_hole.add_rock()
+            rocks_to_scatter -= 1
+            working_on_hole = working_on_hole.linked_hole
+        self.check_rules()
+        return True, "OK"
+
+    def check_rules(self):
         pass
 
     def draw(self):
         board_map = [
-            ["a1", "a2", "a3", "a4", "a5", "a6"],
+            ["b6", "b5", "b4", "b3", "b2", "b1"],
             ["b0", "a0"],
-            ["b1", "b2", "b3", "b4", "b5", "b6"]
+            ["a1", "a2", "a3", "a4", "a5", "a6"],
         ]
         for line in board_map:
             if len(line) == 2:
